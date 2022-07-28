@@ -1059,18 +1059,19 @@ contract TheSeedCollector is ERC1155, Ownable {
 
     uint256 public mintRate = 0.001 ether;
     uint256 public maxMintAmount = 5;
-    uint256[] public minted = [0, 0];
-    uint256[] public supplies = [250, 250];
+    uint256[] public totalMinted = [0, 0];
+    uint256[] public tokenSupply = [250, 250];
 
   function mint(uint256 id, uint256 amount)
         payable
         public
     {
         require(msg.value >=(amount * mintRate), "Not enough ether sent.");
-        require(id <= supplies.length, "Token doesn't exist.");
-        require(minted[id] + amount <= supplies[id], "Not enough supply left.");
+        require(id <= tokenSupply.length, "Token doesn't exist.");
+        require(totalMinted[id] + amount <= tokenSupply[id], "Not enough supply left.");
         require(amount <= maxMintAmount, "You can't mint more than 5 NFTs per wallet");
         _mint(msg.sender, id, amount, "");
+        totalMinted[id]+= amount;
     }
 
   function mintBatch(address _to, uint[] memory _ids, uint[] memory _amounts) external onlyOwner {
